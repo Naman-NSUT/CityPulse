@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { NavLink, Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bell, Map, Home, PlusCircle, Activity, Menu, X, Rocket } from 'lucide-react'
 
@@ -15,6 +15,11 @@ export default function TopNavBar() {
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
+
+    // Close mobile menu on route change
+    useEffect(() => {
+        setMobileOpen(false)
+    }, [location.pathname])
 
     const links = [
         { name: 'Home', path: '/', icon: Home },
@@ -47,29 +52,32 @@ export default function TopNavBar() {
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex flex-1 justify-center space-x-6">
-                        {links.map((link) => {
-                            const active = location.pathname === link.path
-                            return (
-                                <Link
-                                    key={link.path}
-                                    to={link.path}
-                                    className={`relative px-3 py-2 text-sm font-medium transition-colors ${active ? 'text-cyan-400' : 'text-slate-300 hover:text-white'
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-1.5">
-                                        <link.icon size={16} />
-                                        <span>{link.name}</span>
-                                    </div>
-                                    {active && (
-                                        <motion.div
-                                            layoutId="navbar-indicator"
-                                            className="absolute bottom-0 left-0 w-full h-0.5 bg-cyan-400 rounded-full"
-                                            transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                                        />
-                                    )}
-                                </Link>
-                            )
-                        })}
+                        {links.map((link) => (
+                            <NavLink
+                                key={link.path}
+                                to={link.path}
+                                end={link.path === '/'}
+                                className={({ isActive }) =>
+                                    `relative px-3 py-2 text-sm font-medium transition-colors ${isActive ? 'text-cyan-400' : 'text-slate-300 hover:text-white'}`
+                                }
+                            >
+                                {({ isActive }) => (
+                                    <>
+                                        <div className="flex items-center gap-1.5">
+                                            <link.icon size={16} />
+                                            <span>{link.name}</span>
+                                        </div>
+                                        {isActive && (
+                                            <motion.div
+                                                layoutId="navbar-indicator"
+                                                className="absolute bottom-0 left-0 w-full h-0.5 bg-cyan-400 rounded-full"
+                                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                                            />
+                                        )}
+                                    </>
+                                )}
+                            </NavLink>
+                        ))}
                     </div>
 
                     {/* Right side CTA / Actions */}
@@ -107,23 +115,24 @@ export default function TopNavBar() {
                     >
                         <div className="px-4 pt-2 pb-6 space-y-1">
                             {links.map((link) => (
-                                <Link
+                                <NavLink
                                     key={link.path}
                                     to={link.path}
-                                    onClick={() => setMobileOpen(false)}
-                                    className={`flex items-center gap-3 px-3 py-3 rounded-xl text-base font-medium ${location.pathname === link.path
+                                    end={link.path === '/'}
+                                    className={({ isActive }) =>
+                                        `flex items-center gap-3 px-3 py-3 rounded-xl text-base font-medium ${isActive
                                             ? 'bg-cyan-500/10 text-cyan-400'
                                             : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                                        }`}
+                                        }`
+                                    }
                                 >
                                     <link.icon size={18} />
                                     <span>{link.name}</span>
-                                </Link>
+                                </NavLink>
                             ))}
                             <div className="pt-4 mt-2 border-t border-slate-800">
                                 <Link
                                     to="/report"
-                                    onClick={() => setMobileOpen(false)}
                                     className="w-full flex justify-center items-center gap-2 bg-cyan-500 text-slate-900 px-4 py-3 rounded-full font-bold shadow-[0_0_15px_rgba(6,182,212,0.3)]"
                                 >
                                     <PlusCircle size={18} />

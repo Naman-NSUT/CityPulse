@@ -1,9 +1,10 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { SocketProvider } from './lib/socket'
 import DashboardLayout from './layouts/DashboardLayout'
 import { Toaster } from 'react-hot-toast'
 import AIChatbot from './components/Shared/AIChatbot'
 import PageTransition from './components/Shared/PageTransition'
+import ErrorBoundary from './components/ErrorBoundary'
 
 // Authority Pages
 import DashboardPage from './pages/DashboardPage'
@@ -20,58 +21,42 @@ import ImpactPage from './pages/Citizen/ImpactPage'
 
 export default function App() {
     return (
-        <SocketProvider>
-            <Toaster position="top-center" toastOptions={{ style: { background: '#1e293b', color: '#fff' } }} />
-            <Routes>
-                {/* Citizen Public Portal */}
-                <Route element={<CitizenLayout />}>
-                    <Route path="/" element={
-                        <PageTransition>
-                            <Home />
-                        </PageTransition>
-                    } />
-                    <Route path="/report" element={
-                        <PageTransition>
-                            <ReportPage />
-                        </PageTransition>
-                    } />
-                    <Route path="/map" element={
-                        <PageTransition>
-                            <CitizenMapPage />
-                        </PageTransition>
-                    } />
-                    <Route path="/my-reports" element={
-                        <PageTransition>
-                            <MyReportsPage />
-                        </PageTransition>
-                    } />
-                    <Route path="/impact" element={
-                        <PageTransition>
-                            <ImpactPage />
-                        </PageTransition>
-                    } />
-                </Route>
+        <ErrorBoundary>
+            <SocketProvider>
+                <Toaster position="top-center" toastOptions={{ style: { background: '#1e293b', color: '#fff' } }} />
+                <Routes>
+                    {/* Citizen Public Portal */}
+                    <Route element={<CitizenLayout />}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/report" element={<ReportPage />} />
+                        <Route path="/map" element={<CitizenMapPage />} />
+                        <Route path="/my-reports" element={<MyReportsPage />} />
+                        <Route path="/impact" element={<ImpactPage />} />
+                        {/* Catch-all: redirect unknown routes to home */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Route>
 
-                {/* Authority Admin Pages */}
-                <Route element={<DashboardLayout />}>
-                    <Route path="/dashboard" element={
-                        <PageTransition>
-                            <DashboardPage />
-                        </PageTransition>
-                    } />
-                    <Route path="/chat" element={
-                        <PageTransition>
-                            <ChatPage />
-                        </PageTransition>
-                    } />
-                    <Route path="/admin/map" element={
-                        <PageTransition>
-                            <MapPage />
-                        </PageTransition>
-                    } />
-                </Route>
-            </Routes>
-            <AIChatbot />
-        </SocketProvider>
+                    {/* Authority Admin Pages */}
+                    <Route element={<DashboardLayout />}>
+                        <Route path="/dashboard" element={
+                            <PageTransition>
+                                <DashboardPage />
+                            </PageTransition>
+                        } />
+                        <Route path="/chat" element={
+                            <PageTransition>
+                                <ChatPage />
+                            </PageTransition>
+                        } />
+                        <Route path="/admin/map" element={
+                            <PageTransition>
+                                <MapPage />
+                            </PageTransition>
+                        } />
+                    </Route>
+                </Routes>
+                <AIChatbot />
+            </SocketProvider>
+        </ErrorBoundary>
     )
 }

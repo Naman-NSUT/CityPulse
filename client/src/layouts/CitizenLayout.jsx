@@ -24,18 +24,9 @@ export default function CitizenLayout() {
 
             {/* Main Content Area */}
             <main className="relative z-10 pt-16 min-h-screen flex flex-col">
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={location.pathname}
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -15 }}
-                        transition={{ duration: 0.3, ease: 'easeOut' }}
-                        className="flex-grow flex flex-col"
-                    >
-                        <Outlet />
-                    </motion.div>
-                </AnimatePresence>
+                <div className="flex-grow flex flex-col">
+                    <Outlet />
+                </div>
             </main>
         </div>
     )

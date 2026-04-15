@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import { fetchIssues, fetchStats, fetchTimeline, fetchCategories } from '../lib/api'
@@ -10,6 +11,7 @@ import ActivityFeed from '../components/dashboard/ActivityFeed'
 import EmptyState from '../components/dashboard/EmptyState'
 
 export default function DashboardPage() {
+    const navigate = useNavigate()
     const { data: issues = [], isLoading: isLoadingIssues } = useQuery({
         queryKey: ['issues'],
         queryFn: () => fetchIssues(),
@@ -53,7 +55,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex gap-3">
-                    <button onClick={() => window.location.href = '/'} className="glass-button text-sm font-medium px-4 py-2 hover:bg-emerald-500/20 hover:text-emerald-300 transition-colors">
+                    <button onClick={() => navigate('/')} className="glass-button text-sm font-medium px-4 py-2 hover:bg-emerald-500/20 hover:text-emerald-300 transition-colors">
                         Simulate Report
                     </button>
                     <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-md">
@@ -95,7 +97,7 @@ export default function DashboardPage() {
                     <p className="text-slate-400 text-sm max-w-sm">
                         The Leaflet geospatial block is modularized. For now, view the global impact map via the sidebar route.
                     </p>
-                    <button onClick={() => window.location.href = '/map'} className="mt-4 glass-button text-xs font-medium px-4 py-2">
+                    <button onClick={() => navigate('/map')} className="mt-4 glass-button text-xs font-medium px-4 py-2">
                         Open Full Map
                     </button>
                 </div>

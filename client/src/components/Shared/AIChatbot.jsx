@@ -114,7 +114,7 @@ export default function AIChatbot() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsOpen(true)}
-                className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-white rounded-full shadow-lg z-50 flex items-center justify-center"
+                className="fixed bottom-6 left-6 w-14 h-14 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-white rounded-full shadow-lg z-50 flex items-center justify-center"
             >
                 <MessageCircle className="w-6 h-6" />
             </motion.button>
@@ -126,7 +126,7 @@ export default function AIChatbot() {
                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        className="fixed bottom-24 right-6 w-96 h-[600px] bg-slate-900 border border-white/10 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden"
+                        className="fixed bottom-24 left-6 w-96 h-[600px] bg-slate-900 border border-white/10 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden"
                     >
                         {/* Header */}
                         <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 p-4 flex items-center justify-between">
@@ -162,11 +162,10 @@ export default function AIChatbot() {
                                         </div>
                                     )}
                                     <div className={`max-w-[80%] ${message.type === 'user' ? 'order-first' : ''}`}>
-                                        <div className={`rounded-2xl px-4 py-3 ${
-                                            message.type === 'user'
+                                        <div className={`rounded-2xl px-4 py-3 ${message.type === 'user'
                                                 ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white'
                                                 : 'bg-slate-800 text-slate-200'
-                                        }`}>
+                                            }`}>
                                             <p className="text-sm leading-relaxed">{message.content}</p>
                                         </div>
                                         <p className="text-xs text-slate-500 mt-1 px-2">

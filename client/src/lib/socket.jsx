@@ -1,28 +1,34 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { io } from 'socket.io-client'
 import { useQueryClient } from '@tanstack/react-query'
 
 const SocketContext = createContext(null)
 
 export function SocketProvider({ children }) {
-    const [socket, setSocket] = useState(null)
+    const socketRef = useRef(null)
     const [connected, setConnected] = useState(false)
     const [activities, setActivities] = useState([])
     const queryClient = useQueryClient()
 
     useEffect(() => {
+        // Initialize socket only once
+        if (socketRef.current) return
+
         const newSocket = io('http://localhost:5000', {
             transports: ['websocket', 'polling'],
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionAttempts: 10,
         })
 
         newSocket.on('connect', () => {
             setConnected(true)
-            console.log('[Socket] Connected')
+            console.log('✅ [Socket] Connected:', newSocket.id)
         })
 
         newSocket.on('disconnect', () => {
             setConnected(false)
-            console.log('[Socket] Disconnected')
+            console.log('❌ [Socket] Disconnected')
         })
 
         // Real-time issue events
@@ -62,12 +68,19 @@ export function SocketProvider({ children }) {
             }, ...prev].slice(0, 50))
         })
 
-        setSocket(newSocket)
-        return () => newSocket.close()
-    }, [queryClient])
+        socketRef.current = newSocket
+
+        // Cleanup only on full unmount
+        return () => {
+            if (socketRef.current) {
+                socketRef.current.disconnect()
+                socketRef.current = null
+            }
+        }
+    }, []) // Empty deps — initialize once, never reconnect on re-renders
 
     return (
-        <SocketContext.Provider value={{ socket, connected, activities }}>
+        <SocketContext.Provider value={{ socket: socketRef.current, connected, activities }}>
             {children}
         </SocketContext.Provider>
     )
