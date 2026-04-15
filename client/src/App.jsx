@@ -12,7 +12,7 @@ import MapPage from './pages/MapPage'
 
 // Citizen Pages (New)
 import CitizenLayout from './layouts/CitizenLayout'
-import Home from './pages/Citizen/Home'
+import Home from './pages/LandingPage'
 import ReportPage from './pages/Citizen/ReportPage'
 import CitizenMapPage from './pages/Citizen/CitizenMapPage'
 import MyReportsPage from './pages/Citizen/MyReportsPage'
