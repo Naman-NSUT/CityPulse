@@ -1,0 +1,87 @@
+services:
+  # ─── MongoDB ─────────────────────────────────────────────
+  mongo:
+    image: mongo:7.0
+    container_name: citypulse-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - citypulse-net
+
+  # ─── Express API + Socket.io ─────────────────────────────
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: citypulse-server
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/citypulse
+      - PORT=5000
+      - ML_SERVICE_URL=http://ml-service:8000
+      - AGENT_URL=http://agent:8001
+    volumes:
+      - ./server/uploads:/app/uploads
+    depends_on:
+      - mongo
+    networks:
+      - citypulse-net
+
+  # ─── FastAPI ML Microservice ─────────────────────────────
+  ml-service:
+    build:
+      context: ./ml-service
+      dockerfile: Dockerfile
+    container_name: citypulse-ml
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml-service/saved_models:/app/saved_models
+    networks:
+      - citypulse-net
+
+  # ─── LangGraph Agent ────────────────────────────────────
+  agent:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+    container_name: citypulse-agent
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - API_URL=http://server:5000/api
+      - ML_URL=http://ml-service:8000
+    depends_on:
+      - server
+      - ml-service
+    networks:
+      - citypulse-net
+
+  # ─── React Frontend ─────────────────────────────────────
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: citypulse-client
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - server
+    networks:
+      - citypulse-net
+
+volumes:
+  mongo_data:
+
+
+networks:
+  citypulse-net:
+    driver: bridge

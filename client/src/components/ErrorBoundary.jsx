@@ -1,0 +1,30 @@
+import React from 'react'
+
+export default class ErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = { hasError: false, error: null, errorInfo: null }
+    }
+
+    static getDerivedStateFromError(error) {
+        return { hasError: true }
+    }
+
+    componentDidCatch(error, errorInfo) {
+        this.setState({ error, errorInfo })
+        console.error("Caught by ErrorBoundary:", error, errorInfo)
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div style={{ padding: '20px', color: 'white', backgroundColor: '#900' }}>
+                    <h1>Something went wrong.</h1>
+                    <pre>{this.state.error?.toString()}</pre>
+                    <pre>{this.state.errorInfo?.componentStack}</pre>
+                </div>
+            )
+        }
+        return this.props.children
+    }
+}
